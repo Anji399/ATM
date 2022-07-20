@@ -5,26 +5,30 @@ pipeline {
     stage('Git checkout') {
       steps {
           git changelog: false, poll: false, url: 'https://github.com/Anji399/ATM.git'
-          
       }
     }
-    stage('package') {
+    stage('Package') {
       steps {
           sh 'mvn package'
-      }    
+      }
     }
-    stage('Build docker image') {
+    stage("Build image") {
       steps {
-        sh 'docker build -t mvpar/atm_machine:1.1.3 .'
+          sh 'docker build -t 786770494633.dkr.ecr.ap-south-1.amazonaws.com/atm .'
       }
     }
     stage('push image') {
       steps {
-        withCredentials([string(credentialsId: 'docklock', variable: 'docker')]) {
-         sh "docker login -u mvpar -p ${docker}"
-        } 
-        sh  'docker push mvpar/atm_machine:1.1.3'
+          sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 786770494633.dkr.ecr.ap-south-1.amazonaws.com"
+          sh "docker push 786770494633.dkr.ecr.ap-south-1.amazonaws.com/atm" 
+      }    
+    }
+    stage('k8s deploy') {
+      steps {
+          withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', serverUrl: '') {
+          sh 'kubectl apply -f deploy.yml'
+          }
       }
     }
   }
-}
+} 
