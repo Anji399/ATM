@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: atm
-        image: 786770494633.dkr.ecr.ap-south-1.amazonaws.com/atmapp:latest
+        image: 786770494633.dkr.ecr.ap-south-1.amazonaws.com/atm-app:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8085
