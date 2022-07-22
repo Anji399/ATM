@@ -17,11 +17,8 @@ spec:
       containers:
       - name: atm
         image: 786770494633.dkr.ecr.ap-south-1.amazonaws.com/atm-app:latest
-        imagePullPolicy: Always
         ports:
-        - containerPort: 8085
-          name: http
-          protocol: TCP
+        - containerPort: 80
 # service type loadbalancer       
 ---
 apiVersion: v1
@@ -29,14 +26,10 @@ kind: Service
 metadata:
   labels:
     app: atm-app
-    k8s-app: atm-app
-  name: atm-app
+  name: svc
 spec:
   ports:
-  - name: http
-    port: 80
+  - port: 80
+    nodePort: 30001
     protocol: TCP
-    targetPort: 8085
-  type: LoadBalancer
-  selector:
-    app: atm-app
+  type: NodePort
